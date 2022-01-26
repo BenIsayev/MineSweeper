@@ -8,7 +8,7 @@ const FLAG = '🇮🇱'
 const WINSMILEY = '🤑'
 
 
-
+var gHintCount;
 var gLives;
 var gTimerInterval;
 var gLevel = {};
@@ -24,17 +24,19 @@ var gFirstClick = true;
 
 var elTimer = document.querySelector(".timer span")
 var elLives = document.querySelector(".lives span")
+var elHintBtn = document.querySelector('.hints span')
 
 function initGame() {
-    gLives = 3
+    gLives = 3;
+    gHintCount = 3;
     elLives.innerText = gLives;
     gGame.secsPassed = 0;
     gGame.isOn = true;
     clearInterval(gTimerInterval);
     gTimerInterval = null;
     gFirstClick = true;
-    var elTimer = document.querySelector(".timer span")
-    elTimer.innerText = gGame.secsPassed
+    elTimer.innerText = gGame.secsPassed;
+    elHintBtn.innerText = gHintCount;
     var elSmiley = document.querySelector(".smiley")
     elSmiley.innerText = HAPPYSMILEY;
     gBoard = buildBoard(gLevel);
@@ -126,7 +128,6 @@ function cellClicked(elCell, i, j) {
     if (modelCell.isShown) return;
     if (modelCell.isMarked) return;
     if (gBoard[i][j].isMine) {
-        debugger;
         gBoard[i][j].isShown = true;
         renderBoard(gBoard, ".main-board")
         gLives--;
@@ -192,6 +193,7 @@ function checkArea(i, j) {
             if (currCell.isMarked) continue;
             if (!currCell.isMine) {
                 currCell.isShown = true;
+
             }
         }
     }
@@ -201,6 +203,7 @@ function checkArea(i, j) {
 
 
 function gameOver(board) {
+    gGame.isOn = false;
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
             var currCell = board[i][j]
@@ -209,7 +212,8 @@ function gameOver(board) {
     }
     var elSmiley = document.querySelector(".smiley")
     elSmiley.innerText = SADSMILEY;
-    clearInterval(gTimerInterval)
+    clearInterval(gTimerInterval);
+
     renderBoard(gBoard, ".main-board")
 }
 
@@ -219,16 +223,19 @@ function checkWin(board) {
             var isShown = board[i][j].isShown;
             var isMarked = board[i][j].isMarked;
             var isMine = board[i][j].isMine;
-            if (isMine && isMarked) continue;
-            if (isMine && !isMarked) return;
-            if (!isMine && isShown) continue;
-            if (!isMine && !isShown) return;
+            // if (isMine && isMarked) continue;
+            // if (isMine && !isMarked) return;
+            // if (!isMine && isShown) continue;
+            // if (!isMine && !isShown) return;
+            if (!isShown && isMarked && isMine) continue;
+            if (!isShown) return;
         }
     }
     winGame();
 }
 
 function winGame() {
+    gGame.isOn = false;
     var elCells = document.querySelectorAll('.cell')
     for (var i = 0; i < elCells.length; i++) {
         var currCell = elCells[i]
@@ -237,4 +244,42 @@ function winGame() {
     var elSmiley = document.querySelector(".smiley")
     elSmiley.innerText = WINSMILEY;
     clearInterval(gTimerInterval)
+}
+
+function getHint(board) {
+    if (gHintCount === 0) return;
+    gHintCount--;
+    var elHintBtn = document.querySelector('.hints span')
+    elHintBtn.innerText = gHintCount;
+    var showedCells = [];
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
+            if (!board[i][j].isMine && !board[i][j].isShown) {
+                // var elCell = document.querySelector(`.cell-${i}-${j}`)
+                // elCell.classList.add("flash")
+                for (var k = i - 1; k <= i + 1; k++) {
+                    for (var l = j - 1; l <= j + 1; l++) {
+                        if (k === -1 || l === -1 || k === gBoard.length || l === gBoard.length) continue;
+                        else {
+                            if (!gBoard[k][l].isShown) {
+                                showedCells.push({ i: k, j: l });
+                                console.log('k', k, 'l', l)
+                            }
+                            gBoard[k][l].isShown = true;
+                            renderBoard(gBoard, ".main-board")
+                        }
+                    }
+                }
+                setTimeout(() => {
+                    for (var m = 0; m < showedCells.length; m++) {
+                        var currUnShow = showedCells[m];
+                        gBoard[currUnShow.i][currUnShow.j].isShown = false;
+                    }
+                    renderBoard(gBoard, ".main-board")
+                }, 1500)
+                console.log(showedCells)
+                return;
+            }
+        }
+    }
 }

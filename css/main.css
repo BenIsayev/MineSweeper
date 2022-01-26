@@ -18,6 +18,11 @@ body {
     background-color: gray;
 }
 
+.flash {
+    animation-name: toggle;
+    animation-duration: 8s;
+}
+
 .cell:hover {
     background-color: rgb(148, 148, 148);
 }
@@ -55,4 +60,13 @@ table {
 
 .sellected {
     background-color: lightgray;
+}
+
+@keyframes toggle {
+    from {
+        background-color: lightgray;
+    }
+    to {
+        background-color: gray
+    }
 }

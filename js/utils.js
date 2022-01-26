@@ -25,7 +25,7 @@ function renderBoard(board, selector) {
             if (currCell.isShown) className += ' sellected'
             var onClickName = 'cellClicked(this, ' + i + ', ' + j + ')'
             var onMouseOver = 'updateLoc(' + i + ',' + j + ')';
-            strHTML += `<td onmouseover=${onMouseOver} onclick="${onClickName}" class="${className}">${cell}</td>`;
+            strHTML += `<td title="${MINE}" onmouseover=${onMouseOver} onclick="${onClickName}" class="${className}">${cell}</td>`;
         }
         strHTML += '</tr>'
     }
