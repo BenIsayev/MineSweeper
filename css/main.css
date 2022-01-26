@@ -1,0 +1,58 @@
+* {
+    box-sizing: border-box;
+    text-align: center;
+}
+
+body {
+    background-image: URL("../img//background.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.cell {
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    background-color: gray;
+}
+
+.cell:hover {
+    background-color: rgb(148, 148, 148);
+}
+
+.headline,
+.buttons {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.buttons .smiley {
+    width: 10%;
+    font-size: 2rem;
+    margin-top: 10px;
+}
+
+table {
+    margin: auto;
+}
+
+.main-board {
+    margin: auto;
+    top: 40%;
+    min-width: 20%;
+    height: 20%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.marked {
+    background-color: rgb(55, 55, 55);
+}
+
+.sellected {
+    background-color: lightgray;
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MineSweeper</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body onload="initGame()" onkeyup="keyPressed(event)">
+
+
+    <div class="headline">
+        <h1>The MineSweeper!</h1>
+    </div>
+    <div class="buttons">
+        <button onclick="setLevel(this)">Easy</button>
+        <button onclick="setLevel(this)">Medium</button>
+        <button onclick="setLevel(this)">Expert</button>
+        </br>
+        <button class="smiley" onclick="initGame()">😜</button>
+
+    </div>
+    <div class="timer">Timer: <span>0</span>:00 sec</div>
+
+    <div class="main-board"></div>
+
+
+    <div class="below-board">
+        <button class="lives"> Lives: <span>3</span></button>
+        <button class="hints">Hints: <span>3</span></button>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+</body>
