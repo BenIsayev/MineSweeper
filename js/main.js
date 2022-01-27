@@ -8,6 +8,9 @@ const FLAG = '🇮🇱'
 const WINSMILEY = '🤑'
 
 
+
+var gWinAmount = (localStorage.gWinAmount) ? localStorage.gWinAmount : 0;
+localStorage.gWinAmount = gWinAmount;
 var gPlays;
 var gCurrPlay = [];
 var gSafeClickCount;
@@ -25,12 +28,14 @@ var gGame = {
 }
 var gFirstClick = true;
 
+var elWinCount = document.querySelector(".win-amount span");
 var elTimer = document.querySelector(".timer span");
 var elLives = document.querySelector(".lives span");
 var elHints = document.querySelector('.hints span');
 var elSafeBtn = document.querySelector('.safe-click span');
 var elFrame = document.querySelector(".frame");
 
+elWinCount.innerText = gWinAmount;
 
 function initGame() {
     gBoard = buildBoard(gLevel);
@@ -250,6 +255,8 @@ function winGame() {
     var elSmiley = document.querySelector(".smiley");
     elSmiley.innerText = WINSMILEY;
     elFrame.classList.add('win');
+    updateWinAmout()
+    elWinCount.innerText = gWinAmount;
     clearInterval(gTimerInterval)
 }
 
@@ -360,4 +367,11 @@ function hintUpdate() {
         case 0:
             elHints.innerHTML = ''
     }
+}
+
+function updateWinAmout() {
+    gWinAmount++
+    localStorage.gWinAmount++;
+    elWinCount.innerText = gWinAmount;
+    console.log(gWinAmount)
 }
