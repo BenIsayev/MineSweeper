@@ -24,11 +24,12 @@ var gGame = {
     isOn: false,
     shownCount: 0,
     markedCount: 0,
-    secsPassed: 0
+    secsPassed: 0,
+    mode: 'normal',
 }
 var gFirstClick = true;
 
-var elWinCount = document.querySelector(".win-amount span");
+var elWinCount = document.querySelector(".stats .win-amount");
 var elTimer = document.querySelector(".timer span");
 var elLives = document.querySelector(".lives span");
 var elHints = document.querySelector('.hints span');
@@ -47,6 +48,7 @@ function initGame() {
     hintUpdate();
     gGame.secsPassed = 0;
     gGame.isOn = true;
+    gGame.mode = 'normal';
     clearInterval(gTimerInterval);
     gTimerInterval = null;
     gFirstClick = true;
@@ -61,11 +63,13 @@ function initGame() {
 }
 
 function buildBoard(level) {
+    var nextId = 1;
     var board = [];
     for (var i = 0; i < level.size; i++) {
         board.push([]);
         for (var j = 0; j < level.size; j++) {
             board[i][j] = {
+                id: nextId++,
                 minesAroundCount: 0,
                 isShown: false,
                 isMine: false,
@@ -76,15 +80,37 @@ function buildBoard(level) {
     return board;
 }
 
-function addMines(board, level, k, l) {
-    for (var i = 0; i < level.mines; i++) {
-        var randomI = getRandomLoc(board).i
-        var randomJ = getRandomLoc(board).j
-        if (randomI === k && randomJ === l) continue;
-        board[randomI][randomJ].isMine = true;
+function addMines(mode, board, level, k = 0, l = 0) {
+    switch (mode) {
+        case 'normal':
+            for (var i = 0; i < level.mines; i++) {
+                var randomI = getRandomLoc(board).i
+                var randomJ = getRandomLoc(board).j
+                if (randomI === k && randomJ === l) continue;
+                board[randomI][randomJ].isMine = true;
+            }
+            break;
+        case '7Boom':
+            for (var i = 0; i < board.length; i++) {
+                for (var j = 0; j < board[0].length; j++) {
+                    var currCell = board[i][j];
+                    if (currCell.id % 7 === 0 || (currCell.id - 7) % 10 === 0) currCell.isMine = true;
+                }
+            }
+            break;
     }
     setMinesNegsCount(gBoard);
     renderBoard(board, ".main-board");
+}
+
+function setMode(elMode) {
+    if (!gFirstClick) {
+        alert('Game has started, reset and try again');
+        return;
+    }
+    var mode = elMode.innerText;
+    gGame.mode = mode;
+    addMines(mode, gBoard, gLevel, 0, 0)
 }
 
 
@@ -131,7 +157,7 @@ function setLevel(elLevel) {
 
 function cellClicked(elCell, i, j) {
     if (!gGame.isOn) return;
-    if (gFirstClick) addMines(gBoard, gLevel, i, j);
+    if (gFirstClick) addMines(gGame.mode, gBoard, gLevel, i, j);
     var modelCell = gBoard[i][j];
     if (gFirstClick) {
         gTimerInterval = setInterval(() => {
@@ -374,4 +400,12 @@ function updateWinAmout() {
     localStorage.gWinAmount++;
     elWinCount.innerText = gWinAmount;
     console.log(gWinAmount)
+}
+
+
+function showModes() {
+    var elModeSelectors = document.querySelectorAll(".mode-set");
+    for (var i = 0; i < elModeSelectors.length; i++) {
+        elModeSelectors[i].classList.toggle("hide")
+    }
 }

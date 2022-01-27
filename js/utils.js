@@ -2,8 +2,8 @@
 
 
 
-
 function renderBoard(board, selector) {
+
     var strHTML = `<table><tbody>`;
     for (var i = 0; i < board.length; i++) {
         strHTML += '<tr>';
@@ -28,7 +28,7 @@ function renderBoard(board, selector) {
             if (currCell.isShown) className += ' sellected'
             var onClickName = 'cellClicked(this, ' + i + ', ' + j + ')'
             var onMouseOver = 'updateLoc(' + i + ',' + j + ')';
-            strHTML += `<td title="Hey there😉" onmouseover=${onMouseOver} onclick="${onClickName}"  class="${className}">${cell}</td>`;
+            strHTML += `<td id="${currCell.id}" title="Hey there😉" onmouseover=${onMouseOver} onclick="${onClickName}"  class="${className}">${cell}</td>`;
         }
         strHTML += '</tr>'
     }

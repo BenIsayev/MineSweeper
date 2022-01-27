@@ -12,8 +12,8 @@
 <body onload="initGame()">
 
 
-    <div class="win-amount">
-        You won totally <span></span> times
+    <div class="stats">
+        You won totally <span class="win-amount"></span> times.
     </div>
     <div onclick="undo(gPlays, gBoard)" class="headline">
         <img src="img/logo.png" />
@@ -22,6 +22,8 @@
         <button class="button" onclick="setLevel(this)">Easy</button>
         <button class="button" onclick="setLevel(this)">Medium</button>
         <button class="button" onclick="setLevel(this)">Expert</button>
+        <button class="button" onclick="showModes()">MORE FUN</button></br>
+        <button class="button mode-set hide" onclick="setMode(this)">7Boom</button>
         </br>
 
     </div>
