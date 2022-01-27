@@ -9,28 +9,30 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body onload="initGame()" onkeyup="keyPressed(event)">
+<body onload="initGame()">
 
 
-    <div class="headline">
-        <h1>The MineSweeper!</h1>
+    <div onclick="undo(gPlays, gBoard)" class="headline">
+        <img src="img/logo.png" />
     </div>
     <div class="buttons">
-        <button onclick="setLevel(this)">Easy</button>
-        <button onclick="setLevel(this)">Medium</button>
-        <button onclick="setLevel(this)">Expert</button>
+        <button class="button" onclick="setLevel(this)">Easy</button>
+        <button class="button" onclick="setLevel(this)">Medium</button>
+        <button class="button" onclick="setLevel(this)">Expert</button>
         </br>
-        <button class="smiley" onclick="initGame()">😜</button>
 
     </div>
-    <div class="timer">Timer: <span>0</span>:00 sec</div>
+    <div class="frame">
+        <button class="timer">Timer: <span>0</span>:00 sec</button>
+        <button class="smiley" onclick="initGame()">😜</button>
+        <button class="safe-click" onclick="safeClick(gBoard)">Safe clicks: <span>3</span></button>
 
-    <div class="main-board"></div>
-
+        <div class="main-board"></div>
+    </div>
 
     <div class="below-board">
-        <button class="lives"> Lives: <span>3</span></button>
-        <button onclick="getHint(gBoard)" class="hints">Hints: <span>3</span></button>
+        <div class="lives"><span></span></div>
+        <div onclick="getHint(gBoard)" class="hints"><span></span></div>
     </div>
 
     <script src="js/utils.js"></script>

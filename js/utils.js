@@ -21,11 +21,14 @@ function renderBoard(board, selector) {
                 cell = FLAG;
                 className = 'marked '
             }
+            if (currCell.minesAroundCount === 0 && !currCell.isMine) {
+                cell = ''
+            }
             className += 'cell cell-' + i + '-' + j;
             if (currCell.isShown) className += ' sellected'
             var onClickName = 'cellClicked(this, ' + i + ', ' + j + ')'
             var onMouseOver = 'updateLoc(' + i + ',' + j + ')';
-            strHTML += `<td title="${MINE}" onmouseover=${onMouseOver} onclick="${onClickName}" class="${className}">${cell}</td>`;
+            strHTML += `<td title="Hey there😉" onmouseover=${onMouseOver} onclick="${onClickName}"  class="${className}">${cell}</td>`;
         }
         strHTML += '</tr>'
     }

@@ -8,6 +8,9 @@ const FLAG = '🇮🇱'
 const WINSMILEY = '🤑'
 
 
+var gPlays;
+var gCurrPlay = [];
+var gSafeClickCount;
 var gHintCount;
 var gLives;
 var gTimerInterval;
@@ -22,24 +25,31 @@ var gGame = {
 }
 var gFirstClick = true;
 
-var elTimer = document.querySelector(".timer span")
-var elLives = document.querySelector(".lives span")
-var elHintBtn = document.querySelector('.hints span')
+var elTimer = document.querySelector(".timer span");
+var elLives = document.querySelector(".lives span");
+var elHints = document.querySelector('.hints span');
+var elSafeBtn = document.querySelector('.safe-click span');
+var elFrame = document.querySelector(".frame");
+
 
 function initGame() {
+    gBoard = buildBoard(gLevel);
+    gPlays = [];
     gLives = 3;
     gHintCount = 3;
-    elLives.innerText = gLives;
+    gSafeClickCount = 3;
+    livesUpdate();
+    hintUpdate();
     gGame.secsPassed = 0;
     gGame.isOn = true;
     clearInterval(gTimerInterval);
     gTimerInterval = null;
     gFirstClick = true;
     elTimer.innerText = gGame.secsPassed;
-    elHintBtn.innerText = gHintCount;
+    elSafeBtn.innerText = gSafeClickCount;
+    elFrame.classList.remove('win');
     var elSmiley = document.querySelector(".smiley")
     elSmiley.innerText = HAPPYSMILEY;
-    gBoard = buildBoard(gLevel);
     // setMinesNegsCount(gBoard)
     // cellMarked()
     renderBoard(gBoard, ".main-board")
@@ -131,7 +141,8 @@ function cellClicked(elCell, i, j) {
         gBoard[i][j].isShown = true;
         renderBoard(gBoard, ".main-board")
         gLives--;
-        elLives.innerText = gLives;
+        livesUpdate();
+        gPlays.push([{ i: i, j: j }]);
         if (gLives === 0) {
             gameOver(gBoard);
             gGame.isOn = false;
@@ -139,7 +150,9 @@ function cellClicked(elCell, i, j) {
         if (gLives > 0) checkWin(gBoard);
         return;
     }
+    gCurrPlay = [];
     checkArea(i, j)
+    gPlays.push(gCurrPlay);
     if (!modelCell.isMine) {
         elCell.innerText = modelCell.minesAroundCount;
     } else {
@@ -152,15 +165,9 @@ function cellClicked(elCell, i, j) {
     checkWin(gBoard);
 }
 
-function keyPressed(ev) {
-    console.log(ev)
-}
-
 function updateLoc(i, j) {
     gCurrMouseLocation = { i: i, j: j }
 }
-
-
 
 var elMainBoard = document.querySelector(".main-board")
 elMainBoard.addEventListener("contextmenu", function(x) {
@@ -185,19 +192,18 @@ elMainBoard.addEventListener("contextmenu", function(x) {
 
 
 function checkArea(i, j) {
-
     for (var k = i - 1; k <= i + 1; k++) {
         for (var l = j - 1; l <= j + 1; l++) {
             if (k === -1 || l === -1 || k === gBoard.length || l === gBoard.length) continue
             var currCell = gBoard[k][l];
-            if (currCell.isMarked) continue;
+            if (currCell.isMarked || currCell.isShown) continue;
             if (!currCell.isMine) {
                 currCell.isShown = true;
-
+                if (!currCell.minesAroundCount) checkArea(k, l);
+                gCurrPlay.push({ i: k, j: l })
             }
         }
     }
-
     renderBoard(gBoard, ".main-board")
 }
 
@@ -207,7 +213,7 @@ function gameOver(board) {
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
             var currCell = board[i][j]
-            currCell.isShown = true;
+            if (currCell.isMine) currCell.isShown = true;
         }
     }
     var elSmiley = document.querySelector(".smiley")
@@ -236,21 +242,21 @@ function checkWin(board) {
 
 function winGame() {
     gGame.isOn = false;
-    var elCells = document.querySelectorAll('.cell')
+    var elCells = document.querySelectorAll('.cell');
     for (var i = 0; i < elCells.length; i++) {
         var currCell = elCells[i]
         currCell.style.backgroundColor = 'lightgreen'
     }
-    var elSmiley = document.querySelector(".smiley")
+    var elSmiley = document.querySelector(".smiley");
     elSmiley.innerText = WINSMILEY;
+    elFrame.classList.add('win');
     clearInterval(gTimerInterval)
 }
 
 function getHint(board) {
-    if (gHintCount === 0) return;
+    if (gHintCount === 0 || gFirstClick || !gGame.isOn) return;
     gHintCount--;
-    var elHintBtn = document.querySelector('.hints span')
-    elHintBtn.innerText = gHintCount;
+    hintUpdate();
     var showedCells = [];
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
@@ -281,5 +287,77 @@ function getHint(board) {
                 return;
             }
         }
+    }
+}
+
+function safeClick(board) {
+    if (gSafeClickCount === 0 || gFirstClick || !gGame.isOn) return;
+    gSafeClickCount--;
+    elSafeBtn.innerText = gSafeClickCount;
+    for (var i = 0; i < 100; i++) {
+        var randI = getRandomLoc(board).i;
+        var randJ = getRandomLoc(board).j;
+        if (!board[randI][randJ].isMine && !board[randI][randJ].isShown) {
+            var elCell = document.querySelector(`.cell-${randI}-${randJ}`);
+            elCell.classList.add("flash");
+            return;
+        }
+
+    }
+
+    // for (var i = 0; i < board.length; i++) {
+    //     for (var j = 0; j < board[0].length; j++) {
+    //         var currCell = board[i][j];
+    //         if (!currCell.isMine && !currCell.isShown) {
+    //             var elCell = document.querySelector(`.cell-${i}-${j}`);
+    //             elCell.classList.add("flash");
+    //             return
+    //         }
+    //     }
+    // }
+}
+
+
+function undo(plays, board) {
+    if (gFirstClick || !gGame.isOn) return;
+    var playUndone = plays[plays.length - 1]
+    for (var i = 0; i < playUndone.length; i++) {
+        var currPlay = playUndone[i];
+        board[currPlay.i][currPlay.j].isShown = false;
+    }
+    plays.pop();
+    renderBoard(gBoard, ".main-board");
+}
+
+
+function livesUpdate() {
+    switch (gLives) {
+        case 3:
+            elLives.innerHTML = '<img src="img/heart.png"><img src="img/heart.png"><img src="img/heart.png">';
+            break;
+        case 2:
+            elLives.innerHTML = '<img src="img/heart.png"><img src="img/heart.png">';
+            break;
+        case 1:
+            elLives.innerHTML = '<img src="img/heart.png">';
+            break;
+        case 0:
+            elLives.innerHTML = ''
+    }
+}
+
+function hintUpdate() {
+    switch (gHintCount) {
+        case 3:
+            elHints.innerHTML = '<img src="img/hint.png"><img src="img/hint.png"><img src="img/hint.png">';
+            break;
+        case 2:
+            elHints.innerHTML = '<img src="img/hint.png"><img src="img/hint.png">';
+            break;
+        case 1:
+            elHints.innerHTML = '<img src="img/hint.png">';
+            break;
+        case 0:
+            elHints.innerHTML = ''
     }
 }
