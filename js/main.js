@@ -110,7 +110,6 @@ function setMode(elMode) {
     }
     var mode = elMode.innerText;
     gGame.mode = mode;
-    addMines(mode, gBoard, gLevel, 0, 0)
 }
 
 
