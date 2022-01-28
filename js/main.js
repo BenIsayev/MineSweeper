@@ -259,10 +259,6 @@ function checkWin(board) {
             var isShown = board[i][j].isShown;
             var isMarked = board[i][j].isMarked;
             var isMine = board[i][j].isMine;
-            // if (isMine && isMarked) continue;
-            // if (isMine && !isMarked) return;
-            // if (!isMine && isShown) continue;
-            // if (!isMine && !isShown) return;
             if (!isShown && isMarked && isMine) continue;
             if (!isShown) return;
         }

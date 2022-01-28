@@ -12,10 +12,10 @@
 <body onload="initGame()">
 
 
-    <div class="stats">
-        You won totally <span class="win-amount"></span> times.
-    </div>
     <div onclick="undo(gPlays, gBoard)" class="headline">
+        <div class="stats">
+            You won totally <span class="win-amount"></span> times.
+        </div>
         <img src="img/logo.png" />
     </div>
     <div class="buttons">
@@ -26,6 +26,10 @@
         <button class="button mode-set hide" onclick="setMode(this)">7Boom</button>
         </br>
 
+        <div class="over-board">
+            <div class="lives"><span></span></div>
+            <div onclick="getHint(gBoard)" class="hints"><span></span></div>
+        </div>
     </div>
     <div class="frame">
         <button class="timer">Timer: <span>0</span>:00 sec</button>
@@ -35,10 +39,6 @@
         <div class="main-board"></div>
     </div>
 
-    <div class="below-board">
-        <div class="lives"><span></span></div>
-        <div onclick="getHint(gBoard)" class="hints"><span></span></div>
-    </div>
 
 
     <script src="js/utils.js"></script>
