@@ -141,6 +141,7 @@
     
     .over-board {
         margin: auto;
+        min-height: 34px;
         width: 25%;
     }
     

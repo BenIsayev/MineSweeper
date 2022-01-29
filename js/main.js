@@ -28,6 +28,8 @@ var gGame = {
     mode: 'normal',
 }
 var gFirstClick = true;
+var gHintMode = false;
+
 
 var elWinCount = document.querySelector(".stats .win-amount");
 var elTimer = document.querySelector(".timer span");
@@ -155,6 +157,29 @@ function setLevel(elLevel) {
 }
 
 function cellClicked(elCell, i, j) {
+    if (gHintMode) {
+        var showedCells = [];
+        for (var k = i - 1; k <= i + 1; k++) {
+            for (var l = j - 1; l <= j + 1; l++) {
+                if (k === -1 || l === -1 || k === gBoard.length || l === gBoard.length) continue;
+                var currCell = gBoard[k][l];
+                if (currCell.isShown || currCell.isMarked) continue;
+                currCell.isShown = true;
+                showedCells.push({ i: k, j: l });
+            }
+        }
+        renderBoard(gBoard, ".main-board");
+        setTimeout(() => {
+            for (var m = 0; m < showedCells.length; m++) {
+                var currUnShow = showedCells[m];
+                gBoard[currUnShow.i][currUnShow.j].isShown = false;
+            }
+            renderBoard(gBoard, ".main-board")
+            gGame.isOn = true;
+            gHintMode = false;
+        }, 1500)
+        return;
+    }
     if (!gGame.isOn) return;
     if (gFirstClick) addMines(gGame.mode, gBoard, gLevel, i, j);
     var modelCell = gBoard[i][j];
@@ -283,39 +308,41 @@ function winGame() {
 
 function getHint(board) {
     if (gHintCount === 0 || gFirstClick || !gGame.isOn) return;
+    gHintMode = true;
+    gGame.isOn = false;
     gHintCount--;
     hintUpdate();
     var showedCells = [];
-    for (var i = 0; i < board.length; i++) {
-        for (var j = 0; j < board[0].length; j++) {
-            if (!board[i][j].isMine && !board[i][j].isShown) {
-                // var elCell = document.querySelector(`.cell-${i}-${j}`)
-                // elCell.classList.add("flash")
-                for (var k = i - 1; k <= i + 1; k++) {
-                    for (var l = j - 1; l <= j + 1; l++) {
-                        if (k === -1 || l === -1 || k === gBoard.length || l === gBoard.length) continue;
-                        else {
-                            if (!gBoard[k][l].isShown) {
-                                showedCells.push({ i: k, j: l });
-                                console.log('k', k, 'l', l)
-                            }
-                            gBoard[k][l].isShown = true;
-                            renderBoard(gBoard, ".main-board")
-                        }
-                    }
-                }
-                setTimeout(() => {
-                    for (var m = 0; m < showedCells.length; m++) {
-                        var currUnShow = showedCells[m];
-                        gBoard[currUnShow.i][currUnShow.j].isShown = false;
-                    }
-                    renderBoard(gBoard, ".main-board")
-                }, 1500)
-                console.log(showedCells)
-                return;
-            }
-        }
-    }
+    // for (var i = 0; i < board.length; i++) {
+    //     for (var j = 0; j < board[0].length; j++) {
+    //         if (!board[i][j].isMine && !board[i][j].isShown) {
+    //             // var elCell = document.querySelector(`.cell-${i}-${j}`)
+    //             // elCell.classList.add("flash")
+    //             for (var k = i - 1; k <= i + 1; k++) {
+    //                 for (var l = j - 1; l <= j + 1; l++) {
+    //                     if (k === -1 || l === -1 || k === gBoard.length || l === gBoard.length) continue;
+    //                     else {
+    //                         if (!gBoard[k][l].isShown) {
+    //                             showedCells.push({ i: k, j: l });
+    //                         }
+    //                         gBoard[k][l].isShown = true;
+    //                         renderBoard(gBoard, ".main-board");
+    //                     }
+    //                 }
+    //             }
+    //             setTimeout(() => {
+    //                 for (var m = 0; m < showedCells.length; m++) {
+    //                     var currUnShow = showedCells[m];
+    //                     gBoard[currUnShow.i][currUnShow.j].isShown = false;
+    //                 }
+    //                 renderBoard(gBoard, ".main-board")
+    //             }, 1500)
+    //             console.log(showedCells)
+    //             return;
+    //         }
+    //     }
+    // }
+
 }
 
 function safeClick(board) {
