@@ -130,8 +130,6 @@
     
     .win {
         background-image: URL("../img/dollars.jpg");
-        opacity: 0%;
-        transition: 10s opacity;
     }
     
     .lives img,
